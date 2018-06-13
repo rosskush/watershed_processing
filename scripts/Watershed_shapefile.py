@@ -1,13 +1,24 @@
 import geopandas as gpd
 import os
+import glob
+import glob2
+import simplekml
 
-ws = gpd.read_file(os.path.join('ws_poly2.shp'))
-print(ws.head())
-ws = ws.to_crs({'init': 'epsg:3665'})
+os.chdir("shp_out")
+os.system("pwd")
+sites = ['08108780', '0810588650']
+for site in sites:
+    gdf = gpd.read_file(f'ws_poly_{site}.shp')
+    gdf = gdf.to_crs({'init': 'epsg:3665'})
+    gdf['Area_sq_mi'] = gdf['geometry'].area * (3.86102e-7) # convert sq meter to sq miles
+    gdf['Site_ID'] = site
+    print(gdf.head())
 
-watersheds = os.path.join('shapefiles')
-for water in watersheds:
-    # ws['Site_ID'] = ws[]
-    ws['Area_sq_mi'] = ws['geometry'].area * (3.86102e-7)  # convert sq meter to sq miles
+    # kml = simplekml.Kml()
+    # gdf.apply(lambda X: kml.newpoint(name=X['EP_{site}'], coords=[(gdf['geometry'])] ,axis=1))
+    # kml.save(path = "EP_{site}.kml")
 
-print(ws.head())
+
+
+
+
